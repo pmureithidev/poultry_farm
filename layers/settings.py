@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts.apps.AccountsConfig', #new app
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,6 +69,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'layers.wsgi.application'
 
+
+# Custom authentication
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
