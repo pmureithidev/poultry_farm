@@ -1,8 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import CustomSignUpForm
 
 # Create your views here.
 @login_required
@@ -14,7 +12,12 @@ def dashboard(request):
     )
 
 # user registration
-class SignUpView(CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'registration/signup.html'
+def register(request):
+    if request.method == 'POST':
+        form = CustomSignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = CustomSignUpForm()
+    return render(request, 'accounts/register.html', {'form': form})

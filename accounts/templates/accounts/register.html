@@ -1,0 +1,152 @@
+{% extends 'auth_base.html' %}
+
+{% block title %}Create Account - PoultryPro{% endblock %}
+
+{% block auth_content %}
+<div class="form-header">
+    <h2 class="form-title">Create Account</h2>
+    <p class="form-subtitle">Join thousands of successful farmers</p>
+</div>
+
+<!-- Display Django Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Display Form Errors -->
+{% if form.non_field_errors %}
+    <div class="alert alert-error">
+        {% for error in form.non_field_errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <i class="fas fa-user input-icon"></i>
+        <input 
+            type="text" 
+            name="{{ form.username.name }}" 
+            class="form-input {% if form.username.errors %}error{% endif %}" 
+            placeholder="Username"
+            value="{{ form.username.value|default:'' }}"
+            required
+        >
+        {% if form.username.errors %}
+            <div class="error-message">
+                {% for error in form.username.errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-envelope input-icon"></i>
+        <input 
+            type="email" 
+            name="{{ form.email.name }}" 
+            class="form-input {% if form.email.errors %}error{% endif %}" 
+            placeholder="Email Address"
+            value="{{ form.email.value|default:'' }}"
+            required
+        >
+        {% if form.email.errors %}
+            <div class="error-message">
+                {% for error in form.email.errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-lock input-icon"></i>
+        <input 
+            type="password" 
+            name="{{ form.password1.name }}" 
+            class="form-input {% if form.password1.errors %}error{% endif %}" 
+            placeholder="Password"
+            required
+        >
+        <button type="button" class="password-toggle" onclick="togglePassword(this)">
+            <i class="fas fa-eye"></i>
+        </button>
+        {% if form.password1.errors %}
+            <div class="error-message">
+                {% for error in form.password1.errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-lock input-icon"></i>
+        <input 
+            type="password" 
+            name="{{ form.password2.name }}" 
+            class="form-input {% if form.password2.errors %}error{% endif %}" 
+            placeholder="Confirm Password"
+            required
+        >
+        <button type="button" class="password-toggle" onclick="togglePassword(this)">
+            <i class="fas fa-eye"></i>
+        </button>
+        {% if form.password2.errors %}
+            <div class="error-message">
+                {% for error in form.password2.errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-options">
+        <div class="checkbox-container">
+            <input type="checkbox" id="terms" name="agree_terms" required>
+            <label for="terms">I agree to the <a href="#" style="color: #2c5530;">Terms & Conditions</a></label>
+        </div>
+    </div>
+
+    <button type="submit" class="submit-btn">
+        <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
+        Create Account
+    </button>
+</form>
+
+<div class="divider">
+    <span>or sign up with</span>
+</div>
+
+<div class="social-buttons">
+    <a href="#" class="social-btn">
+        <i class="fab fa-google"></i>
+        Google
+    </a>
+    <a href="#" class="social-btn">
+        <i class="fab fa-microsoft"></i>
+        Microsoft
+    </a>
+</div>
+
+<div class="auth-switch">
+    Already have an account? <a href="{% url 'login' %}">Sign in here</a>
+</div>
+
+<script>
+function togglePassword(button) {
+    const input = button.previousElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}
