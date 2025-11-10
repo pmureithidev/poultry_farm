@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Kuku App{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <!-- Page header with welcome message -->
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back! Here's an overview of your farm performance</p>
+  </div>
+
+  <!-- Quick statistics grid with key metrics -->
+  <div class="stats-grid">
+    <div class="stat-card birds">
+      <div class="stat-number">{{ total_birds|default:"1250" }}</div>
+      <div class="stat-label">Total Birds</div>
+      <div class="stat-change">
+        <i class="fas fa-arrow-up text-income"></i>
+        <span class="text-income">12% from last month</span>
+      </div>
+      <div class="stat-icon">
+        <i class="fa-solid fa-feather"></i>
+      </div>
+    </div>
+
+    <div class="stat-card flocks">
+      <div class="stat-number">{{ total_flocks|default:"5" }}</div>
+      <div class="stat-label">Active Flocks</div>
+      <div class="stat-change">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ active_flocks_count|default:"4" }} active</span>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-layer-group"></i>
+      </div>
+    </div>
+
+    <div class="stat-card eggs">
+      <div class="stat-number">{{ monthly_eggs|default:"850" }}</div>
+      <div class="stat-label">Eggs This Month</div>
+      <div class="stat-change">
+        <i class="fas fa-arrow-up text-income"></i>
+        <span class="text-income">8% increase</span>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-egg"></i>
+      </div>
+    </div>
+
+    <div class="stat-card revenue">
+      <div class="stat-number">Ksh {{ revenue|default:"42500" }}</div>
+      <div class="stat-label">Monthly Revenue</div>
+      <div class="stat-change">
+        <i class="fas fa-arrow-up text-income"></i>
+        <span class="text-income">+15% growth</span>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-coins"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content area with two-column layout -->
+  <div class="dashboard-grid">
+    
+    <!-- Left Column: Flock Breakdown and Recent Flocks -->
+    <div>
+      <!-- Flock Breakdown Card -->
+      <div class="content-card chart-card">
+        <h3 class="section-title">
+          <i class="fas fa-chart-pie"></i> Flock Breakdown
+        </h3>
+        <div class="flock-breakdown">
+          <div class="breakdown-item">
+            <div class="breakdown-label">
+              <span class="breakdown-color bg-primary"></span>
+              Layers
+            </div>
+            <div class="breakdown-stat">{{ layers_count|default:"3" }}</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-label">
+              <span class="breakdown-color bg-warning"></span>
+              Broilers
+            </div>
+            <div class="breakdown-stat">{{ broilers_count|default:"2" }}</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-label">
+              <span class="breakdown-color bg-success"></span>
+              Active
+            </div>
+            <div class="breakdown-stat">{{ active_flocks_count|default:"4" }}</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-label">
+              <span class="breakdown-color" style="background-color: var(--muted-color);"></span>
+              Inactive
+            </div>
+            <div class="breakdown-stat">{{ inactive_flocks_count|default:"1" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Flocks Card -->
+      <div class="content-card">
+        <div class="card-header">
+          <h3 class="section-title">
+            <i class="fas fa-list"></i> Recent Flocks
+          </h3>
+          <a href="/flocks" class="btn btn-outline-primary">View All</a>
+        </div>
+        <div class="recent-flocks">
+          {% if recent_flocks %}
+            {% for flock in recent_flocks %}
+            <div class="flock-item">
+              <div class="flock-info">
+                <div class="flock-name">{{ flock.name }}</div>
+                <div class="flock-details">
+                  <span class="badge-custom">{{ flock.get_flock_type_display }}</span>
+                  <span class="flock-count">{{ flock.number_of_birds }} birds</span>
+                  <span class="flock-date">{{ flock.date_of_purchase|date:"d M Y" }}</span>
+                </div>
+              </div>
+              <div class="flock-status">
+                {% if flock.is_active %}
+                <span class="status-badge active">Active</span>
+                {% else %}
+                <span class="status-badge inactive">Inactive</span>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>No flocks yet. <a href="/flocks">Create your first flock</a></p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Quick Actions and Financial Summary -->
+    <div>
+      <!-- Quick Actions Card -->
+      <div class="content-card">
+        <h3 class="section-title">
+          <i class="fas fa-flash"></i> Quick Actions
+        </h3>
+        <div class="quick-actions">
+          <a href="/flocks" class="quick-action-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add New Flock</span>
+          </a>
+          <a href="#" class="quick-action-btn">
+            <i class="fas fa-syringe"></i>
+            <span>Record Vaccination</span>
+          </a>
+          <a href="#" class="quick-action-btn">
+            <i class="fas fa-heartbeat"></i>
+            <span>Remove Flock</span>
+          </a>
+          <a href="#" class="quick-action-btn">
+            <i class="fas fa-receipt"></i>
+            <span>Record Expense</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Financial Summary Card -->
+      <div class="content-card income-card">
+        <h3 class="section-title">
+          <i class="fas fa-chart-line"></i> Financial Summary
+        </h3>
+        <div class="financial-grid">
+          <div class="financial-stat income">
+            <div class="financial-label">Monthly Income</div>
+            <div class="financial-amount">Ksh {{ monthly_income|default:"45000" }}</div>
+            <div class="financial-change">
+              <i class="fas fa-arrow-up text-income"></i> +8% vs last month
+            </div>
+          </div>
+          <div class="financial-stat expense">
+            <div class="financial-label">Monthly Expenses</div>
+            <div class="financial-amount">Ksh {{ monthly_expenses|default:"2500" }}</div>
+            <div class="financial-change">
+              <i class="fas fa-arrow-down text-expense"></i> Feed costs
+            </div>
+          </div>
+          <div class="financial-stat profit">
+            <div class="financial-label">Net Profit</div>
+            <div class="financial-amount">Ksh {{ net_profit|default:"42500" }}</div>
+            <div class="financial-change">
+              <i class="fas fa-check-circle text-success"></i> Healthy
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

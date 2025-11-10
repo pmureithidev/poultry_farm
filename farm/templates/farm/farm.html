@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_header %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="fas fa-dove me-2"></i>Flock Management</h1>
+            <p>Setup your poultry farm & add new flocks.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Display Messages -->
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {% if message.tags == 'error' %}
+            <i class="fas fa-exclamation-triangle me-2"></i>
+        {% elif message.tags == 'success' %}
+            <i class="fas fa-check-circle me-2"></i>
+        {% else %}
+            <i class="fas fa-info-circle me-2"></i>
+        {% endif %}
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<div class="row">
+    <!-- Add New Flock Form -->
+    <div class="col-lg-8 mb-4">
+        <div class="content-card form-card">
+            <h4 class="section-title mb-4">
+                <i class="fas fa-plus-circle me-2"></i>Add New Flock
+            </h4>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <!-- Display Form Errors -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Flock Information Section -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-info-circle me-2"></i>Flock Information
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">Flock Name <span class="required">*</span></label>
+                                <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" class="form-control input-field" placeholder="Flock Name" required>
+                                {% if form.name.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.name.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.flock_type.id_for_label }}" class="form-label">Flock Type <span class="required">*</span></label>
+                                <!-- Render select dynamically from form choices instead of hardcoded options -->
+                                <select name="{{ form.flock_type.name }}" id="{{ form.flock_type.id_for_label }}" class="form-control input-field" required>
+                                    <option value="">Select Flock Type</option>
+                                    {% for value, label in form.flock_type.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}">{{ label }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.flock_type.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.flock_type.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.number_of_birds.id_for_label }}" class="form-label">Number of Birds <span class="required">*</span></label>
+                                <input type="number" name="{{ form.number_of_birds.name }}" id="{{ form.number_of_birds.id_for_label }}" class="form-control input-field" placeholder="Number of birds" min="1" required>
+                                {% if form.number_of_birds.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.number_of_birds.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.breed.id_for_label }}" class="form-label">Breed <span class="required">*</span></label>
+                                <input type="text" name="{{ form.breed.name }}" id="{{ form.breed.id_for_label }}" class="form-control input-field" placeholder="Kenchic, Kuroiler, Rainbow, etc" required>
+                                {% if form.breed.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.breed.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acquisition Details Section -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-calendar me-2"></i>Acquisition Details
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.date_of_purchase.id_for_label }}" class="form-label">Date of Purchase <span class="required">*</span></label>
+                                <input type="date" name="{{ form.date_of_purchase.name }}" id="{{ form.date_of_purchase.id_for_label }}" class="form-control input-field" required>
+                                {% if form.date_of_purchase.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.date_of_purchase.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.age.id_for_label }}" class="form-label">Age (Days) <span class="required">*</span></label>
+                                <input type="number" name="{{ form.age.name }}" id="{{ form.age.id_for_label }}" class="form-control input-field" placeholder="Age in Days" min="1" required>
+                                {% if form.age.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.age.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.supplier.id_for_label }}" class="form-label">Supplier <span class="required">*</span></label>
+                                <input type="text" name="{{ form.supplier.name }}" id="{{ form.supplier.id_for_label }}" class="form-control input-field" placeholder="Kenchic Agent, Isinya Farms" required>
+                                {% if form.supplier.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.supplier.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.price.id_for_label }}" class="form-label">Total Cost of Birds (KES) <span class="required">*</span></label>
+                                <input type="number" name="{{ form.price.name }}" id="{{ form.price.id_for_label }}" class="form-control input-field" placeholder="0.00" step="0.01" min="0" required>
+                                {% if form.price.errors %}
+                                    <div class="text-danger small mt-1">{% for error in form.price.errors %}{{ error }}{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Housing & Management Section -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-home me-2"></i>Housing & Management
+                    </h5>
+
+                    <div class="form-group mb-3">
+                        <label for="{{ form.housing.id_for_label }}" class="form-label">Housing Type</label>
+                        <input type="text" name="{{ form.housing.name }}" id="{{ form.housing.id_for_label }}" class="form-control input-field" placeholder="Cages, Deep Litter, etc">
+                        {% if form.housing.errors %}
+                            <div class="text-danger small mt-1">{% for error in form.housing.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                        <textarea name="{{ form.notes.name }}" id="{{ form.notes.id_for_label }}" class="form-control input-field" placeholder="Additional notes..." rows="3"></textarea>
+                        {% if form.notes.errors %}
+                            <div class="text-danger small mt-1">{% for error in form.notes.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Add is_active checkbox field -->
+                    <div class="form-group mb-3">
+                        <div class="form-check form-switch">
+                            <input type="checkbox" name="is_active" id="is_active" class="form-check-input" checked>
+                            <label class="form-check-label" for="is_active">
+                                <i class="fas fa-check-circle me-2"></i>Flock is Active
+                            </label>
+                        </div>
+                        <small class="text-muted d-block mt-2">Mark as inactive if flock has been sold or culled</small>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-primary" name="action" value="create_flock">
+                        <i class="fas fa-save me-2"></i>Create Flock
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Stats Sidebar -->
+    <div class="col-lg-4 mb-4">
+        <div class="content-card stats-card mb-4">
+            <h5 class="mb-3"><i class="fas fa-chart-pie me-2"></i>Flock Overview</h5>
+            <!-- Enhanced flock breakdown stats with active/inactive and type breakdown -->
+            <div class="stat-item mb-3">
+                <div class="stat-number text-success">{{ active_flocks }}</div>
+                <div class="stat-label">Active Flocks</div>
+            </div>
+            <div class="stat-item mb-3">
+                <div class="stat-number text-danger">{{ inactive_flocks }}</div>
+                <div class="stat-label">Inactive Flocks</div>
+            </div>
+            <hr class="my-3">
+            <div class="stat-item mb-3">
+                <div class="stat-number text-primary">{{ total_broilers }}</div>
+                <div class="stat-label">Broiler Birds</div>
+            </div>
+            <div class="stat-item mb-3">
+                <div class="stat-number text-info">{{ total_layers }}</div>
+                <div class="stat-label">Layer Birds</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number text-warning">{{ total_birds }}</div>
+                <div class="stat-label">Total Birds</div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h5 class="mb-3"><i class="fas fa-lightbulb me-2 text-warning"></i>Setup Tips</h5>
+            <ul class="list-unstyled small">
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Use clear flock names like "Flock A - Layers"
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Enter accurate bird counts for feed planning
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Record breed type (Kenchic, Kuroiler, Rainbow, etc)
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Specify housing type for better management
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

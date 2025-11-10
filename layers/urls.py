@@ -20,5 +20,6 @@ from accounts import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('farm/', include('farm.urls')),
+    path('eggs/', include('eggs.urls')),
 ]
