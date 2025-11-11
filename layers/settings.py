@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig', #new app
     'farm.apps.FarmConfig', #farm app
     'eggs.apps.EggsConfig', #eggs app
+    'django.contrib.humanize', #dispaly numbers nicely
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,7 +76,7 @@ WSGI_APPLICATION = 'layers.wsgi.application'
 
 
 # Custom authentication
-LOGIN_REDIRECT_URL = '/farm/dashboard/'
+LOGIN_REDIRECT_URL = '/farm/dashboard'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 

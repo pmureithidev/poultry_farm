@@ -8,9 +8,17 @@ from .models import Flock
 def dashboard(request):
    return render(
         request,
-        'farm/dashboard.html',
+        'farm/main_dashboard.html',
     )
 
+@login_required
+def flock_dashboard(request):
+    flocks = Flock.objects.filter(user=request.user)
+    return render(
+        request,
+        'farm/flock_dashboard.html',
+        {'flocks': flocks}
+    )
 
 @login_required
 def create_flock(request):
@@ -25,6 +33,6 @@ def create_flock(request):
         form = CreateFlockForm()
 
     return render(request,
-                    'farm/farm.html',
+                    'farm/create_flock_form.html',
                     {'form':form}
     )

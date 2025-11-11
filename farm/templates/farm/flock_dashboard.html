@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block page_header %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="fa-solid fa-feather me-2"></i>Flock Management</h1>
+            <p>Manage and track all your poultry flocks</p>
+        </div>
+        <div>
+            <a href="{% url 'create_flock' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>Add New Flock
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="content-card stats-card">
+            <div class="stat-item">
+                <div class="stat-number text-success">{{ active_flocks }}</div>
+                <div class="stat-label">Active Flocks</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card stats-card">
+            <div class="stat-item">
+                <div class="stat-number text-danger">{{ inactive_flocks }}</div>
+                <div class="stat-label">Inactive Flocks</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card stats-card">
+            <div class="stat-item">
+                <div class="stat-number text-primary">{{ total_birds }}</div>
+                <div class="stat-label">Total Birds</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card stats-card">
+            <div class="stat-item">
+                <div class="stat-number text-warning">{{ total_cost|floatformat:0|intcomma }}</div>
+                <div class="stat-label">Total Investment</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flocks List -->
+<div class="content-card chart-card">
+    <h4 class="section-title mb-4">
+        <i class="fas fa-list-ul me-2"></i>Active Flocks
+    </h4>
+
+    {% if flocks %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Flock Name</th>
+                    <th>Type</th>
+                    <th>Birds</th>
+                    <th>Breed</th>
+                    <th>Date of Purchase</th>
+                    <th>Price - KES</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flock in flocks %}
+                <tr>
+                    <td>
+                        <strong>{{ flock.name }}</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-success">{{ flock.flock_type|capfirst  }}</span>
+                    </td>
+                    <td>{{ flock.number_of_birds }}</td>
+                    <td>{{ flock.breed }}</td>
+                    <td>{{ flock.date_of_purchase }}</td>
+                    <td>{{ flock.price|floatformat:2|intcomma }}</td>
+                    <td>
+                        {% if flock.is_active %}
+                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary"><i class="fas fa-times me-1"></i>Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state text-center py-5">
+        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+        <h5>No Flocks Yet</h5>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
